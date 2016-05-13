@@ -33,7 +33,7 @@
 //   http://dranger.com/ffmpeg/tutorial01.html
 // - AR.Drone Development - 2.1.2 AR.Drone 2.0 Video Decording: FFMPEG + SDL2.0 -
 //   http://ardrone-ailab-u-tokyo.blogspot.jp/2012/07/212-ardrone-20-video-decording-ffmpeg.html
-using namespace cv;
+
 // --------------------------------------------------------------------------
 //! @brief   Initialize video.
 //! @return  Result of initialization
@@ -294,34 +294,4 @@ void ARDrone::finalizeVideo(void)
             pFormatCtx = NULL;
         }
     }
-}
-
-void ARDrone::detectHuman(Mat img) {
-	HOGDescriptor hog;
-	hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
-	if (img.empty())
-		return;
-	
-	std::vector<Rect> found, found_filtered;
-	hog.detectMultiScale(img, found, 0, Size(8, 8), Size(32, 32), 1.05, 2);
-	size_t i, j;
-	for (i=0; i < found.size(); i++)
-	{
-		Rect r = found[i];
-		for (j=0; j<found.size(); j++)
-			if (j != i && (r & found[j]) == r)
-				break;
-		if (j==found.size())
-			found_filtered.push_back(r);
-	}
-
-	for (i=0; i<found_filtered.size(); i++)
-	{
-		Rect r = found_filtered[i];
-		r.x += cvRound(r.width*0.1);
-		r.width = cvRound(r.width*0.8);
-		r.y += cvRound(r.height * 0.07);
-		r.height = cvRound(r.height * 0.8);
-		rectangle(img, r.tl(), r.br(), Scalar(0, 255, 0), 3);
-	}
 }

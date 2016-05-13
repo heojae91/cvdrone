@@ -70,6 +70,9 @@ int main(int argc, char *argv[])
         static int mode = 0;
         if (key == 'c') ardrone.setCamera(++mode % 4);
 
+        // People detect
+        ardrone.detectHuman(image);
+        
         // Display the image
         cv::imshow("camera", image);
     }

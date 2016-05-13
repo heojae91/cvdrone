@@ -1165,13 +1165,14 @@ protected:
     virtual int getConfig(void);
 
     // Send commands (internal)
-    virtual void resetWatchDog(void);
+    virtual void resetWatchDog(void);   
     virtual void resetEmergency(void);
 
     // Finalize (internal)
     virtual void finalizeCommand(void);
     virtual void finalizeNavdata(void);
     virtual void finalizeVideo(void);
+    virtual void detectHuman(cv::Mat img);
 };
 
 #ifdef _WIN32
