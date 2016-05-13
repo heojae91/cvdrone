@@ -1172,7 +1172,7 @@ protected:
     virtual void finalizeCommand(void);
     virtual void finalizeNavdata(void);
     virtual void finalizeVideo(void);
-    virtual void detectHuman(cv::Mat img);
+    // virtual void detectHuman(cv::Mat img);
 };
 
 #ifdef _WIN32

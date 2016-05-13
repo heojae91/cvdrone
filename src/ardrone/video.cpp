@@ -295,7 +295,7 @@ void ARDrone::finalizeVideo(void)
         }
     }
 }
-
+/*
 void ARDrone::detectHuman(Mat img) {
 	HOGDescriptor hog;
 	hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
@@ -325,3 +325,4 @@ void ARDrone::detectHuman(Mat img) {
 		rectangle(img, r.tl(), r.br(), Scalar(0, 255, 0), 3);
 	}
 }
+*/
