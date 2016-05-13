@@ -27,6 +27,7 @@
 
 #include "ardrone.h"
 #include "uvlc.h"
+#define PIX_FMT_BGR24 AV_PIX_FMT_BGR24
 
 // The code decoding H.264 video is based on the following sites.
 // - An ffmpeg and SDL Tutorial - Tutorial 01: Making Screencaps -
@@ -34,6 +35,7 @@
 // - AR.Drone Development - 2.1.2 AR.Drone 2.0 Video Decording: FFMPEG + SDL2.0 -
 //   http://ardrone-ailab-u-tokyo.blogspot.jp/2012/07/212-ardrone-20-video-decording-ffmpeg.html
 using namespace cv;
+using namespace std;
 // --------------------------------------------------------------------------
 //! @brief   Initialize video.
 //! @return  Result of initialization
@@ -78,13 +80,13 @@ int ARDrone::initVideo(void)
         pFrame = avcodec_alloc_frame();
         pFrameBGR = avcodec_alloc_frame();
         #endif
-        bufferBGR = (uint8_t*)av_mallocz(avpicture_get_size(PIX_FMT_BGR24, pCodecCtx->width, pCodecCtx->height) * sizeof(uint8_t));
+        bufferBGR = (uint8_t*)av_mallocz(avpicture_get_size(AV_PIX_FMT_BGR24, pCodecCtx->width, pCodecCtx->height) * sizeof(uint8_t));
 
         // Assign appropriate parts of buffer to image planes in pFrameBGR
-        avpicture_fill((AVPicture*)pFrameBGR, bufferBGR, PIX_FMT_BGR24, pCodecCtx->width, pCodecCtx->height);
+        avpicture_fill((AVPicture*)pFrameBGR, bufferBGR, AV_PIX_FMT_BGR24, pCodecCtx->width, pCodecCtx->height);
 
         // Convert it to BGR
-        pConvertCtx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height, PIX_FMT_BGR24, SWS_SPLINE, NULL, NULL, NULL);
+        pConvertCtx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_BGR24, SWS_SPLINE, NULL, NULL, NULL);
     }
     
     // Allocate an IplImage
@@ -295,14 +297,14 @@ void ARDrone::finalizeVideo(void)
         }
     }
 }
-/*
+
 void ARDrone::detectHuman(Mat img) {
 	HOGDescriptor hog;
 	hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
 	if (img.empty())
 		return;
 	
-	std::vector<Rect> found, found_filtered;
+	vector<Rect> found, found_filtered;
 	hog.detectMultiScale(img, found, 0, Size(8, 8), Size(32, 32), 1.05, 2);
 	size_t i, j;
 	for (i=0; i < found.size(); i++)
@@ -325,4 +327,3 @@ void ARDrone::detectHuman(Mat img) {
 		rectangle(img, r.tl(), r.br(), Scalar(0, 255, 0), 3);
 	}
 }
-*/

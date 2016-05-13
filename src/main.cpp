@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
         if (key == 'c') ardrone.setCamera(++mode % 4);
 
         // People detect
-        // ardrone.detectHuman(image);
+        ardrone.detectHuman(image);
         
         // Display the image
         cv::imshow("camera", image);

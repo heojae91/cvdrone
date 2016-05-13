@@ -81,6 +81,7 @@ extern "C" {
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+
 typedef int SOCKET;
 #define INVALID_SOCKET (-1)
 #define SOCKET_ERROR   (-1)
@@ -106,6 +107,8 @@ inline void msleep(unsigned long ms) {
 #define ARDRONE_CONTROL_PORT        (5559)          // Port for configuration
 #define ARDRONE_DEFAULT_ADDR        "192.168.1.1"   // Default IP address of AR.Drone
 #define ARDRONE_NAVDATA_HEADER      (0x55667788)    // Header of Navdata
+
+#define AV_PIX_FMT_BGR24 PIX_FMT_BGR24
 
 // Math definitions
 #ifndef NULL
@@ -1093,6 +1096,7 @@ public:
     virtual int  onGround(void);                    // Check on ground
     virtual void setVideoRecord(bool activate);     // Video recording (only for AR.Drone 2.0)
     virtual void setOutdoorMode(bool activate);     // Outdoor mode (experimental)
+    virtual void detectHuman(cv::Mat img);
 
 protected:
     // IP address
@@ -1172,7 +1176,6 @@ protected:
     virtual void finalizeCommand(void);
     virtual void finalizeNavdata(void);
     virtual void finalizeVideo(void);
-    // virtual void detectHuman(cv::Mat img);
 };
 
 #ifdef _WIN32
