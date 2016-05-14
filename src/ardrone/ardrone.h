@@ -1096,7 +1096,7 @@ public:
     virtual int  onGround(void);                    // Check on ground
     virtual void setVideoRecord(bool activate);     // Video recording (only for AR.Drone 2.0)
     virtual void setOutdoorMode(bool activate);     // Outdoor mode (experimental)
-    virtual void detectHuman(cv::Mat img);
+    virtual cv::Rect detectHuman(cv::Mat img);
 
 protected:
     // IP address

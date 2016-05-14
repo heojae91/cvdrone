@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
     std::cout << "***************************************" << std::endl;
 
     while (1) {
+        cv::Rect track;
         // Key input
         int key = cv::waitKey(33);
         if (key == 0x1b) break;
@@ -71,7 +72,7 @@ int main(int argc, char *argv[])
         if (key == 'c') ardrone.setCamera(++mode % 4);
 
         // People detect
-        ardrone.detectHuman(image);
+        track = ardrone.detectHuman(image);
         
         // Display the image
         cv::imshow("camera", image);

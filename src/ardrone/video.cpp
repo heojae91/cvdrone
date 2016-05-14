@@ -298,13 +298,15 @@ void ARDrone::finalizeVideo(void)
     }
 }
 
-void ARDrone::detectHuman(Mat img) {
+Rect ARDrone::detectHuman(Mat img) {
 	HOGDescriptor hog;
 	hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
-	if (img.empty())
-		return;
+	// if (img.empty())
+	// 	return nullptr;
 	
 	vector<Rect> found, found_filtered;
+    Rect biggest;
+    Rect *biggest_addr = &biggest;
 	hog.detectMultiScale(img, found, 0, Size(8, 8), Size(32, 32), 1.05, 2);
 	size_t i, j;
 	for (i=0; i < found.size(); i++)
@@ -320,10 +322,15 @@ void ARDrone::detectHuman(Mat img) {
 	for (i=0; i<found_filtered.size(); i++)
 	{
 		Rect r = found_filtered[i];
+        if (biggest_addr == NULL)
+            biggest = r;
 		r.x += cvRound(r.width*0.1);
 		r.width = cvRound(r.width*0.8);
 		r.y += cvRound(r.height * 0.07);
 		r.height = cvRound(r.height * 0.8);
-		rectangle(img, r.tl(), r.br(), Scalar(0, 255, 0), 3);
+        if (biggest.width * biggest.height < r.height * r.width)
+            biggest = r;
+		rectangle(img, biggest.tl(), biggest.br(), Scalar(0, 255, 0), 3);
 	}
+    return biggest;
 }
