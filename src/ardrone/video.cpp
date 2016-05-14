@@ -329,17 +329,19 @@ Rect ARDrone::detectHuman(Mat img) {
 	for (i=0; i<found_filtered.size(); i++)
 	{
 		Rect r = found_filtered[i];
-        if (biggest_addr == NULL)
-            biggest = r;
+
 		r.x += cvRound(r.width*0.1);
 		r.width = cvRound(r.width*0.8);
 		r.y += cvRound(r.height * 0.07);
 		r.height = cvRound(r.height * 0.8);
         medium = (r.x + r.width) / 2;
         if ((medium < SCREEN_WIDTH / 3) || (medium > (SCREEN_WIDTH / 3) * 2))
+            if (biggest_addr == NULL)
+                biggest = r;
             if (biggest.width * biggest.height < r.height * r.width)
                 biggest = r;
 	}
-    rectangle(img, biggest.tl(), biggest.br(), Scalar(0, 255, 0), 3); 
+    rectangle(img, biggest.tl(), biggest.br(), Scalar(0, 255, 0), 3);
+    circle(img, Point((biggest.x + biggest.width) / 2, (biggest.y + biggest.height) / 2), 3, 1);
     return biggest;
 }
