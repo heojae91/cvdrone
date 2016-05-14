@@ -339,7 +339,7 @@ Rect ARDrone::detectHuman(Mat img) {
         if ((medium < SCREEN_WIDTH / 3) || (medium > (SCREEN_WIDTH / 3) * 2))
             if (biggest.width * biggest.height < r.height * r.width)
                 biggest = r;
-		rectangle(img, biggest.tl(), biggest.br(), Scalar(0, 255, 0), 3);
 	}
+    rectangle(img, biggest.tl(), biggest.br(), Scalar(0, 255, 0), 3); 
     return biggest;
 }
