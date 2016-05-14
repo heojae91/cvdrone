@@ -28,6 +28,8 @@
 #include "ardrone.h"
 #include "uvlc.h"
 #define PIX_FMT_BGR24 AV_PIX_FMT_BGR24
+#define SCREEN_HEIGHT 360
+#define SCREEN_WIDTH 640
 
 // The code decoding H.264 video is based on the following sites.
 // - An ffmpeg and SDL Tutorial - Tutorial 01: Making Screencaps -
@@ -186,7 +188,6 @@ ARDRONE_IMAGE ARDrone::getImage(void)
         // Copy current frame to an IplImage
         memcpy(img->imageData, pFrameBGR->data[0], pCodecCtx->width * ((pCodecCtx->height == 368) ? 360 : pCodecCtx->height) * sizeof(uint8_t) * 3);
     }
-    
 	// The latest image has been read, so change newImage accordingly
     newImage = false;
 
@@ -309,6 +310,12 @@ Rect ARDrone::detectHuman(Mat img) {
     Rect *biggest_addr = &biggest;
 	hog.detectMultiScale(img, found, 0, Size(8, 8), Size(32, 32), 1.05, 2);
 	size_t i, j;
+    int medium;
+
+    // draw line of interest
+    line(img, Point(SCREEN_WIDTH / 3, 0), Point(SCREEN_WIDTH / 3, SCREEN_HEIGHT), Scalar(255, 0, 0));
+    line(img, Point((SCREEN_WIDTH / 3) * 2, 0), Point((SCREEN_WIDTH / 3) * 2, SCREEN_HEIGHT), Scalar(255, 0, 0));   
+
 	for (i=0; i < found.size(); i++)
 	{
 		Rect r = found[i];
@@ -328,8 +335,10 @@ Rect ARDrone::detectHuman(Mat img) {
 		r.width = cvRound(r.width*0.8);
 		r.y += cvRound(r.height * 0.07);
 		r.height = cvRound(r.height * 0.8);
-        if (biggest.width * biggest.height < r.height * r.width)
-            biggest = r;
+        medium = (r.x + r.width) / 2;
+        if ((medium < SCREEN_WIDTH / 3) || (medium > (SCREEN_WIDTH / 3) * 2))
+            if (biggest.width * biggest.height < r.height * r.width)
+                biggest = r;
 		rectangle(img, biggest.tl(), biggest.br(), Scalar(0, 255, 0), 3);
 	}
     return biggest;
