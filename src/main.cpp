@@ -35,13 +35,16 @@ int main(int argc, char *argv[])
     std::cout << "*    'A'     -- Move downward         *" << std::endl;
     std::cout << "*                                     *" << std::endl;
     std::cout << "* - Others -                          *" << std::endl;
+    std::cout << "*    'T'     -- Track marker          *" << std::endl;
     std::cout << "*    'C'     -- Change camera         *" << std::endl;
     std::cout << "*    'Esc'   -- Exit                  *" << std::endl;
     std::cout << "*                                     *" << std::endl;
     std::cout << "***************************************" << std::endl;
 
     while (1) {
-        cv::Rect track;
+        double cx = 0;
+        double cy = 0;
+        cv::Rect trackRect;
         // Key input
         int key = cv::waitKey(33);
         if (key == 0x1b) break;
@@ -71,11 +74,51 @@ int main(int argc, char *argv[])
         static int mode = 0;
         if (key == 'c') ardrone.setCamera(++mode % 4);
 
+        // Switch tracking ON/OFF
+        static int track = 0;
+        if (key == 't') track = !track;
+
         // People detect
-        track = ardrone.detectHuman(image);
+        trackRect = ardrone.detectHuman(image);
+
+        cx = trackRect.x + (trackRect.width / 2);
+        cy = trackRect.y + (trackRect.height / 2); 
+        cv::Point2f mc = cv::Point2f(cx, cy);
+
+        //std::cout << "cx: " << cx << " cy: " << cy <<std::endl;
+        cv::circle(image, mc, 5, cv::Scalar(0,0,255));
+        //std::cout << "rect size: " << trackRect.width * trackRect.height << std::endl;
+
+        // Tracking
+        if (track) {
+            if (cx == 0 && cy == 0)
+            {
+                vx = 0.0;
+                vy = 0.0;
+                vr = 0.0;
+                vz = 0.0;
+            } else {
+                const double kp = 0.005;
+                const double ka = 0.005;
+                const double first_area = 30000;
+                double rec_area = trackRect.width * trackRect.height;
+                vx = ka * (first_area - rec_area);
+                vy = 0.0;
+                vr = kp * (image.cols / 2 - mc.x);
+                vz = kp * (image.rows / 2 - mc.y);
+                // const double kp = 0.005;
+                // vx = 0.1;
+                // vy = 0.0;
+                // vz = kp * (image.rows / 2 - cy);
+                // vr = kp * (image.cols / 2 - cx);
+            }
+        }
         
         // Display the image
+        cv::putText(image, (track) ? "track on" : "track off", cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.5, (track) ? cv::Scalar(0, 0, 255) : cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
         cv::imshow("camera", image);
+        ardrone.move3D(vx, vy, vz, vr);
+
     }
 
     // See you
